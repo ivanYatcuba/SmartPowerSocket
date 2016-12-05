@@ -2,23 +2,22 @@ package ischool.noosphere.smartpowersocket;
 
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.esotericsoftware.kryonet.Client;
-
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import ischool.noosphere.smartpowersocket.network.NetworkWorker;
+import ischool.noosphere.smartpowersocket.network.NetworkWorkerKryo;
+import ischool.noosphere.smartpowersocket.network.NetworkWorkerPlain;
+import ischool.noosphere.smartpowersocket.view.SocketControlView;
 
 import static android.content.Context.WIFI_SERVICE;
 
@@ -27,19 +26,29 @@ import static android.content.Context.WIFI_SERVICE;
  */
 public class MainActivityFragment extends Fragment {
 
-    private static final String MESSAGE_TO_SEND = "c1*";
+    public static final String SOCKET_ID_1 = "1";
+    public static final String SOCKET_ID_2 = "2";
+    public static final String SOCKET_ID_3 = "3";
 
     private TextView myIp;
-    private EditText ipToConnect;
-    private EditText portToConnect;
+    private TextView myPort;
 
-    private Button connectToSocket;
-    private Button sendData;
 
-    private ImageView isSocketConnected;
-    private ImageView isClientConnected;
+
+    private Map<String, SocketControlView> stringSocketControlViewMap;
+
+    private LinearLayout viewContainer;
 
     public MainActivityFragment() {
+    }
+
+    private SocketControlView.DataSender getDataSender() {
+        return new SocketControlView.DataSender() {
+            @Override
+            public void sendData(byte[] data) {
+                NetworkWorkerPlain.getInstance().sendData(data);
+            }
+        };
     }
 
     @Override
@@ -48,63 +57,61 @@ public class MainActivityFragment extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_main, container, false);
 
+        stringSocketControlViewMap  = new HashMap<>();
+
         myIp = (TextView) view.findViewById(R.id.my_ip);
 
-        ipToConnect = (EditText) view.findViewById(R.id.ip_to_connect);
-        portToConnect = (EditText) view.findViewById(R.id.port_to_connect);
-        connectToSocket = (Button) view.findViewById(R.id.connect_to_socket);
+        myPort = (TextView) view.findViewById(R.id.my_port);
+        myPort.setText(String.valueOf(NetworkWorker.SERVER_PORT));
 
-        sendData = (Button) view.findViewById(R.id.send_data);
+        viewContainer = (LinearLayout) view.findViewById(R.id.view_container);
 
-        isSocketConnected = (ImageView) view.findViewById(R.id.is_socket_connected);
-        isClientConnected = (ImageView) view.findViewById(R.id.is_client_connected);
+        final SocketControlView socket1 = new SocketControlView(getActivity(), SOCKET_ID_1, getDataSender());
+        final SocketControlView socket2 = new SocketControlView(getActivity(), SOCKET_ID_2, getDataSender());
+        final SocketControlView socket3 = new SocketControlView(getActivity(), SOCKET_ID_3, getDataSender());
 
+        stringSocketControlViewMap.put(SOCKET_ID_1, socket1);
+        stringSocketControlViewMap.put(SOCKET_ID_2, socket2);
+        stringSocketControlViewMap.put(SOCKET_ID_3, socket3);
+
+        viewContainer.addView(socket1);
+        viewContainer.addView(socket2);
+        viewContainer.addView(socket3);
 
         myIp.setText(getMyIpAddress());
 
-        connectToSocket.setOnClickListener(new View.OnClickListener() {
+        NetworkWorkerPlain.getInstance().setConnectedStatusCallBackServer(new NetworkWorkerKryo.ConnectedStatusCallBack() {
             @Override
-            public void onClick(View v) {
-                try {
-                    NetworkWorker.getInstance().startClient(ipToConnect.getText().toString(), Integer.parseInt(portToConnect.getText().toString()));
-                } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), "failed connect to server", e);
+            public void connected() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MainActivity)(getActivity())).setConnected(R.drawable.ic_ok);
+                    }
+                });
+
+            }
+
+            @Override
+            public void disconnected() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MainActivity)(getActivity())).setConnected(R.drawable.ic_error);
+                    }
+                });
+            }
+
+            @Override
+            public void dataReceived(String data) {
+                SocketControlView socketControlView = stringSocketControlViewMap.get(SocketControlView.currentSocket);
+                if(socketControlView != null) {
+                    socketControlView.setSocketAcDc(data);
                 }
-
             }
+
         });
 
-        NetworkWorker.getInstance().setConnectedStatusCallBackClient(new NetworkWorker.ConnectedStatusCallBack() {
-            @Override
-            public void connected() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        isSocketConnected.setImageDrawable(getResources().getDrawable(R.drawable.ok));
-                    }
-                });
-            }
-        });
-
-        NetworkWorker.getInstance().setConnectedStatusCallBackServer(new NetworkWorker.ConnectedStatusCallBack() {
-            @Override
-            public void connected() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        isClientConnected.setImageDrawable(getResources().getDrawable(R.drawable.ok));
-                    }
-                });
-
-            }
-        });
-
-        sendData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NetworkWorker.getInstance().sendData(MESSAGE_TO_SEND.getBytes());
-            }
-        });
 
         return view;
     }

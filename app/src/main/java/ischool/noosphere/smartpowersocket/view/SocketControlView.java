@@ -8,6 +8,9 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import ischool.noosphere.smartpowersocket.R;
 import ischool.noosphere.smartpowersocket.protocol.SmartPowerSocketProtocol;
 
@@ -76,8 +79,11 @@ public class SocketControlView extends RelativeLayout {
     public void setSocketAcDc(String data) {
         try {
             int i = Integer.parseInt(data);
-            double calculatedData = 37.873 - (0.0742 * i);
-            socketAcDc.setText(String.valueOf(calculatedData));
+            Double calculatedData = 37.873 - (0.0742 * i);
+            Double truncatedDouble = BigDecimal.valueOf(calculatedData)
+                    .setScale(2, RoundingMode.HALF_UP)
+                    .doubleValue();
+            socketAcDc.setText(String.valueOf(truncatedDouble));
         } catch (Exception e) {
             socketAcDc.setText("");
         }

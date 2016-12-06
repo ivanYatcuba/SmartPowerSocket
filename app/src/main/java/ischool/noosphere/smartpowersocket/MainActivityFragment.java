@@ -32,12 +32,10 @@ public class MainActivityFragment extends Fragment {
 
     private TextView myIp;
     private TextView myPort;
-
-
+    private LinearLayout viewContainer;
 
     private Map<String, SocketControlView> stringSocketControlViewMap;
 
-    private LinearLayout viewContainer;
 
     public MainActivityFragment() {
     }
@@ -74,9 +72,14 @@ public class MainActivityFragment extends Fragment {
         stringSocketControlViewMap.put(SOCKET_ID_2, socket2);
         stringSocketControlViewMap.put(SOCKET_ID_3, socket3);
 
-        viewContainer.addView(socket1);
-        viewContainer.addView(socket2);
-        viewContainer.addView(socket3);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        layoutParams.setMargins(0, 30, 0, 0);
+
+        viewContainer.addView(socket1, layoutParams);
+        viewContainer.addView(socket2, layoutParams);
+        viewContainer.addView(socket3, layoutParams);
 
         myIp.setText(getMyIpAddress());
 
@@ -103,11 +106,16 @@ public class MainActivityFragment extends Fragment {
             }
 
             @Override
-            public void dataReceived(String data) {
-                SocketControlView socketControlView = stringSocketControlViewMap.get(SocketControlView.currentSocket);
-                if(socketControlView != null) {
-                    socketControlView.setSocketAcDc(data);
-                }
+            public void dataReceived(final String data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SocketControlView socketControlView = stringSocketControlViewMap.get(SocketControlView.currentSocket);
+                        if(socketControlView != null) {
+                            socketControlView.setSocketAcDc(data);
+                        }
+                    }
+                });
             }
 
         });

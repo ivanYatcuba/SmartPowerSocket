@@ -2,8 +2,8 @@ package ischool.noosphere.smartpowersocket.view;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -16,7 +16,7 @@ public class SocketControlView extends RelativeLayout {
     public static String currentSocket = "";
 
     private Switch socketControl;
-    private Button requestSocketCurrent;
+    private ImageButton requestSocketCurrent;
     private TextView socketAcDc;
 
     private String socketId;
@@ -31,7 +31,7 @@ public class SocketControlView extends RelativeLayout {
     public SocketControlView(Context context, String socketId, DataSender dataSender) {
         super(context);
         View view = inflate(context, R.layout.socket_control, null);
-        addView(view);
+        addView(view, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         this.socketId = socketId;
         this.dataSender = dataSender;
         init();
@@ -56,7 +56,7 @@ public class SocketControlView extends RelativeLayout {
            }
        });
 
-       requestSocketCurrent = (Button) findViewById(R.id.get_current);
+       requestSocketCurrent = (ImageButton) findViewById(R.id.get_current);
 
         requestSocketCurrent.setOnClickListener(new OnClickListener() {
             @Override
@@ -74,7 +74,13 @@ public class SocketControlView extends RelativeLayout {
     }
 
     public void setSocketAcDc(String data) {
-        socketAcDc.setText(data);
+        try {
+            int i = Integer.parseInt(data);
+            double calculatedData = 37.873 - (0.0742 * i);
+            socketAcDc.setText(String.valueOf(calculatedData));
+        } catch (Exception e) {
+            socketAcDc.setText("");
+        }
     }
 
 }

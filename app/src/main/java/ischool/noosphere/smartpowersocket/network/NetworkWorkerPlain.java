@@ -59,14 +59,16 @@ public class NetworkWorkerPlain implements NetworkWorker {
                     try {
                         connectionSocket = serverSocket.accept();
                         final String uid = UUID.randomUUID().toString();
-                        socketMap.put(uid, new ClientWorker(uid, connectionSocket, new MessageDispatcher() {
+                        final ClientWorker clientWorker = new ClientWorker(uid, connectionSocket, new MessageDispatcher() {
                             @Override
                             public void dispatchMessage(String clientId, String clientData) {
                                 if(connectedStatusCallBackServer != null) {
                                     connectedStatusCallBackServer.dataReceived(clientData);
                                 }
                             }
-                        }));
+                        });
+                        socketMap.put(uid, clientWorker);
+                        clientWorker.start();
                         connectedStatusCallBackServer.connected();
 
                         Log.d(NETWORK_LOG_TAG, "client with connected!");

@@ -32,6 +32,7 @@ public class NetworkWorkerPlain implements NetworkWorker {
 
     @Override
     public void sendData(byte[] data) {
+        Log.d("SEND DATA", new String(data));
         for(String uid: socketMap.keySet()) {
             try {
                 DataOutputStream outToClient = new DataOutputStream(socketMap.get(uid).getOutputStream());

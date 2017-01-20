@@ -30,6 +30,10 @@ public class MainActivityFragment extends Fragment {
     public static final String SOCKET_ID_2 = "2";
     public static final String SOCKET_ID_3 = "3";
 
+    public static final String SOCKET_NAME_1 = "A";
+    public static final String SOCKET_NAME_2 = "B";
+    public static final String SOCKET_NAME_3 = "C";
+
     private TextView myIp;
     private TextView myPort;
     private LinearLayout viewContainer;
@@ -64,9 +68,9 @@ public class MainActivityFragment extends Fragment {
 
         viewContainer = (LinearLayout) view.findViewById(R.id.view_container);
 
-        final SocketControlView socket1 = new SocketControlView(getActivity(), SOCKET_ID_1, getDataSender());
-        final SocketControlView socket2 = new SocketControlView(getActivity(), SOCKET_ID_2, getDataSender());
-        final SocketControlView socket3 = new SocketControlView(getActivity(), SOCKET_ID_3, getDataSender());
+        final SocketControlView socket1 = new SocketControlView(getActivity(), SOCKET_ID_1, SOCKET_NAME_1, getDataSender());
+        final SocketControlView socket2 = new SocketControlView(getActivity(), SOCKET_ID_2, SOCKET_NAME_2, getDataSender());
+        final SocketControlView socket3 = new SocketControlView(getActivity(), SOCKET_ID_3, SOCKET_NAME_3, getDataSender());
 
         stringSocketControlViewMap.put(SOCKET_ID_1, socket1);
         stringSocketControlViewMap.put(SOCKET_ID_2, socket2);

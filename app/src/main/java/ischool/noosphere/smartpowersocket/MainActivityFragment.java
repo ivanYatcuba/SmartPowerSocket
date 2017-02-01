@@ -14,7 +14,6 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Map;
 
-import ischool.noosphere.smartpowersocket.network.NetworkWorker;
 import ischool.noosphere.smartpowersocket.network.NetworkWorkerKryo;
 import ischool.noosphere.smartpowersocket.network.NetworkWorkerPlain;
 import ischool.noosphere.smartpowersocket.view.SocketControlView;
@@ -35,7 +34,6 @@ public class MainActivityFragment extends Fragment {
     public static final String SOCKET_NAME_3 = "C";
 
     private TextView myIp;
-    private TextView myPort;
     private LinearLayout viewContainer;
 
     private Map<String, SocketControlView> stringSocketControlViewMap;
@@ -62,9 +60,6 @@ public class MainActivityFragment extends Fragment {
         stringSocketControlViewMap  = new HashMap<>();
 
         myIp = (TextView) view.findViewById(R.id.my_ip);
-
-        myPort = (TextView) view.findViewById(R.id.my_port);
-        myPort.setText(String.valueOf(NetworkWorker.SERVER_PORT));
 
         viewContainer = (LinearLayout) view.findViewById(R.id.view_container);
 

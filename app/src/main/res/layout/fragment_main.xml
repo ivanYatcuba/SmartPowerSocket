@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <TextView
-                android:text="My IP:"
+                android:text="IP address:"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
@@ -35,27 +35,59 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
+
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="30dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:text="My Port:"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:layout_marginLeft="10dp"
-                android:id="@+id/my_port"
+                android:textSize="15sp"
+                android:textColor="@android:color/black"
+                android:gravity="center"
+                android:text="Фаза"
                 android:textStyle="bold"
-                android:textSize="21sp"
-                android:layout_width="wrap_content"
+                android:layout_gravity="center"
                 android:layout_height="wrap_content"/>
-        </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:textSize="15sp"
+                    android:textColor="@android:color/black"
+                    android:gravity="center"
+                    android:text="Значение тока"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:textSize="15sp"
+                    android:textColor="@android:color/black"
+                    android:gravity="center"
+                    android:text="Реле"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/view_container"
             android:orientation="vertical"
-            android:layout_marginTop="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

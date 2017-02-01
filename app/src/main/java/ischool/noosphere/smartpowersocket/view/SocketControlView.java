@@ -1,28 +1,25 @@
 package ischool.noosphere.smartpowersocket.view;
 
 import android.content.Context;
-import android.text.InputFilter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import ischool.noosphere.smartpowersocket.R;
 import ischool.noosphere.smartpowersocket.protocol.SmartPowerSocketProtocol;
-import ischool.noosphere.smartpowersocket.util.InputFilterMinMax;
 
 public class SocketControlView extends RelativeLayout {
 
     public static String currentSocket = "";
 
     private Switch socketControl;
-    private ImageButton requestSocketCurrent;
-    private TextView socketAcDc;
-    private EditText powerLimit;
+    private TextView socketNameView;
+    private Button socketAcDc;
+    private NumberPicker powerLimit;
     private Button setPowerLimit;
 
     private String socketId;
@@ -65,9 +62,11 @@ public class SocketControlView extends RelativeLayout {
            }
         });
 
-        requestSocketCurrent = (ImageButton) findViewById(R.id.get_current);
+        socketNameView = (TextView) findViewById(R.id.socket_name);
+        socketNameView.setText(socketName);
 
-        requestSocketCurrent.setOnClickListener(new OnClickListener() {
+        socketAcDc = (Button) findViewById(R.id.socket_ac_dc);
+        socketAcDc.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 currentSocket = socketId;
@@ -75,11 +74,11 @@ public class SocketControlView extends RelativeLayout {
             }
         });
 
-        socketAcDc = (TextView) findViewById(R.id.socket_ac_dc);
+        powerLimit = (NumberPicker) findViewById(R.id.power_limit);
 
-        powerLimit = (EditText) findViewById(R.id.power_limit);
-
-        powerLimit.setFilters(new InputFilter[]{new InputFilterMinMax(1, 16)});
+        powerLimit.setMinValue(1);
+        powerLimit.setMaxValue(16);
+        powerLimit.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
         setPowerLimit = (Button) findViewById(R.id.set_power_limit);
 
@@ -87,7 +86,7 @@ public class SocketControlView extends RelativeLayout {
             @Override
             public void onClick(View v) {
                 try {
-                    Integer powerLimit = Integer.parseInt(SocketControlView.this.powerLimit.getText().toString());
+                    Integer powerLimit = SocketControlView.this.powerLimit.getValue();
                     dataSender.sendData((socketName + formatPowerValue(powerLimit)  + SmartPowerSocketProtocol.END_LINE).getBytes());
                 } catch (NumberFormatException e) {
                     //ignored
@@ -114,7 +113,7 @@ public class SocketControlView extends RelativeLayout {
     public void setSocketAcDc(String data) {
         try {
             int i = Integer.parseInt(data);
-           /* Double calculatedData = 37.873 - (0.0742 * i);
+            /* Double calculatedData = 37.873 - (0.0742 * i);
             Double truncatedDouble = BigDecimal.valueOf(calculatedData)
                     .setScale(2, RoundingMode.HALF_UP)
                     .doubleValue();*/

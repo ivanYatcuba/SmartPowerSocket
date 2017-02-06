@@ -1,5 +1,7 @@
 package ischool.noosphere.smartpowersocket;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -109,9 +111,26 @@ public class MainActivityFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        SocketControlView socketControlView = stringSocketControlViewMap.get(SocketControlView.currentSocket);
-                        if(socketControlView != null) {
-                            socketControlView.setSocketAcDc(data);
+                        if(data.equals("A_lim_over") || data.equals("B_lim_over") || data.equals("C_lim_over")) {
+                            String socketName = data.substring(0, 1);
+                            //todo show warning
+
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("WARNING")
+                                    .setMessage("Phase " + socketName + "\nPreset limit has exceeded!\nPlease heck the connection or set another limit")
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
+
+                        } else {
+                            SocketControlView socketControlView = stringSocketControlViewMap.get(SocketControlView.currentSocket);
+                            if(socketControlView != null) {
+                                socketControlView.setSocketAcDc(data);
+                            }
                         }
                     }
                 });

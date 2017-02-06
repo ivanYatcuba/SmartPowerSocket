@@ -64,6 +64,14 @@ public class NetworkWorkerKryo implements NetworkWorker {
 
             public void received (Connection connection, Object object) {
                 Log.d(NETWORK_LOG_TAG, "server received data! from " + connection.getRemoteAddressTCP().toString());
+
+                if(object instanceof byte[]) {
+                    String str = new String((byte[]) object);
+
+                    connectedStatusCallBackServer.dataReceived(str);
+
+
+                }
             }
 
             @Override

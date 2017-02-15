@@ -126,6 +126,12 @@ public class MainActivityFragment extends Fragment {
                                     .setIcon(android.R.drawable.ic_dialog_alert)
                                     .show();
 
+                            for (SocketControlView view1: stringSocketControlViewMap.values()) {
+                                if(view1.getSocketName().equals(socketName)) {
+                                    view1.turnOffSwitch();
+                                }
+                            }
+
                         } else {
                             SocketControlView socketControlView = stringSocketControlViewMap.get(SocketControlView.currentSocket);
                             if(socketControlView != null) {
